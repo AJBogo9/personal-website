@@ -1,20 +1,46 @@
 "use client";
 
-import { DesktopNav } from "./DesktopNav";
-import { WebsiteOwner } from "./WebsiteOwner";
+import { websiteOwner } from "@/constants";
+import ReactCountryFlag from "react-country-flag";
+import { Nav, Navbar } from "rsuite";
+import "rsuite/dist/rsuite.min.css";
 
 const NavigationBar = () => {
   return (
-    <nav
-      className={`fixed w-full z-50 transition-all duration-300 bg-transparent py-4`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          <WebsiteOwner />
-          <DesktopNav />
-        </div>
-      </div>
-    </nav>
+    <Navbar>
+      <Navbar.Brand href="#">{websiteOwner}</Navbar.Brand>
+      <Nav>
+        <Nav.Item>About</Nav.Item>
+        <Nav.Item>Experience</Nav.Item>
+        <Nav.Item>Contact</Nav.Item>
+      </Nav>
+      <Nav pullRight>
+        <Nav.Menu title="Language">
+          <Nav.Item
+            icon={
+              <ReactCountryFlag
+                countryCode="FI"
+                svg
+                style={{ width: "1em", height: "1em" }}
+              />
+            }
+          >
+            Finnish
+          </Nav.Item>
+          <Nav.Item
+            icon={
+              <ReactCountryFlag
+                countryCode="GB"
+                svg
+                style={{ width: "1em", height: "1em" }}
+              />
+            }
+          >
+            English
+          </Nav.Item>
+        </Nav.Menu>
+      </Nav>
+    </Navbar>
   );
 };
 
