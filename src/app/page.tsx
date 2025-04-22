@@ -3,6 +3,7 @@ import NavigationBar from "../components/NavigationBar";
 import { About } from "@/components/content/About";
 import { Experience } from "@/components/content/Experience";
 import "rsuite/dist/rsuite.min.css";
+import { Contact } from "@/components/Contact";
 
 export default function Home() {
   return (
@@ -13,8 +14,9 @@ export default function Home() {
       <Content>
         <About />
         <Experience />
+        <Contact />
       </Content>
-      <Footer>{/* contact form will be put here */}</Footer>
+      <Footer>{/* Something about me here */}</Footer>
     </Container>
   );
 }
