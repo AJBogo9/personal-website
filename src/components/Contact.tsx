@@ -6,16 +6,26 @@ import { Button, ButtonToolbar, Form, Input } from "rsuite";
 
 type FormData = {
   name: string;
-  email: string;
+  replyTo: string;
   subject: string;
   message: string;
 };
 
 export const Contact = () => {
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const [name, setName] = useState<string>("");
+  const [replyTo, setReplyTo] = useState<string>("");
+  const [subject, setSubject] = useState<string>(""); // TODO: Add character restriction to 988
+  const [message, setMessage] = useState<string>("");
 
-    const formData = formValues;
+  const resetForm = () => {
+    setName("");
+    setReplyTo("");
+    setSubject("");
+    setMessage("");
+  };
+
+  const handleSubmit = async () => {
+    const formData: FormData = { name, replyTo, subject, message };
 
     try {
       const response = await fetch("/api/contact", {
@@ -29,31 +39,18 @@ export const Contact = () => {
       const data = await response.json();
 
       if (data.success) {
+        console.log("message sent successfully");
         // Show success message
         // Reset form
       } else {
+        console.log("XD");
         // Show error message
       }
     } catch (error) {
+      console.log("LOL");
       // Handle error
     }
   };
-
-  const [formValues, setFormValues] = useState<FormData>({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-
-  // Fixes error with Textarea 'rows' property
-  interface TextareaProps extends React.ComponentProps<typeof Input> {
-    rows?: number;
-  }
-
-  const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-    (props, ref) => <Input {...props} as="textarea" ref={ref} />
-  );
 
   return (
     <div id="contact">
@@ -61,25 +58,40 @@ export const Contact = () => {
       <Form layout="horizontal">
         <Form.Group controlId="name-6">
           <Form.ControlLabel>Name</Form.ControlLabel>
-          <Form.Control name="name" />
+          <Form.Control name="name" value={name} onChange={setName} />
           <Form.HelpText tooltip>Required</Form.HelpText>
         </Form.Group>
         <Form.Group controlId="email-6">
           <Form.ControlLabel>Email</Form.ControlLabel>
-          <Form.Control name="email" type="email" />
+          <Form.Control
+            name="email"
+            type="email"
+            value={replyTo}
+            onChange={setReplyTo}
+          />
           <Form.HelpText tooltip>Required</Form.HelpText>
         </Form.Group>
         <Form.Group controlId="email-subject">
           <Form.ControlLabel>Subject</Form.ControlLabel>
-          <Form.Control name="subject" type="text" />
+          <Form.Control
+            name="subject"
+            type="text"
+            value={subject}
+            onChange={setSubject}
+          />
         </Form.Group>
         <Form.Group controlId="textarea-1">
           <Form.ControlLabel>Message</Form.ControlLabel>
-          <Form.Control rows={5} name="textarea" accepter={Textarea} />
+          <Form.Control name="textarea" value={message} onChange={setMessage} />
         </Form.Group>
         <Form.Group>
           <ButtonToolbar>
-            <Button appearance="primary">Submit</Button>
+            <Button appearance="primary" onClick={handleSubmit}>
+              Submit
+            </Button>
+            <Button appearance="default" onClick={resetForm}>
+              Reset
+            </Button>
           </ButtonToolbar>
         </Form.Group>
       </Form>
