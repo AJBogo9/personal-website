@@ -1,99 +1,147 @@
 "use client";
 
 import React from "react";
-import { useState } from "react";
-import { Button, ButtonToolbar, Form, Input } from "rsuite";
+import { useForm, Controller, ControllerRenderProps } from "react-hook-form";
+import { Input, Button, Form, InputProps } from "rsuite";
+import { RsRefForwardingComponent } from "rsuite/esm/internals/types";
 
 type FormData = {
   name: string;
-  replyTo: string;
+  email: string;
   subject: string;
   message: string;
 };
 
-export const Contact = () => {
-  const [name, setName] = useState<string>("");
-  const [replyTo, setReplyTo] = useState<string>("");
-  const [subject, setSubject] = useState<string>(""); // TODO: Add character restriction to 988
-  const [message, setMessage] = useState<string>("");
+type formFieldType = "name" | "email" | "subject" | "message";
 
-  const resetForm = () => {
-    setName("");
-    setReplyTo("");
-    setSubject("");
-    setMessage("");
+type FieldProps = {
+  as: RsRefForwardingComponent<"input", InputProps>;
+  field: ControllerRenderProps<FormData, formFieldType>;
+  error: string | undefined;
+  placeholder: string;
+};
+
+const validationModel = {
+  name: {
+    required: "Name is required",
+  },
+  email: {
+    required: "Email is required",
+    pattern: { value: /\S+@\S+\.\S+/, message: "Invalid email" },
+  },
+  subject: {
+    required: "Subject is required",
+    maxLength: { value: 980, message: "Max length 980 characters" },
+  },
+  message: {
+    required: "Message is required",
+    maxLength: { value: 1500, message: "Max length 1500 characters" },
+  },
+};
+
+const Field = ({
+  as: Component = Input,
+  field,
+  error,
+  placeholder,
+}: FieldProps) => {
+  return (
+    <Form.Group>
+      <Form.ControlLabel>{placeholder}:</Form.ControlLabel>
+      <Component
+        id={field.name}
+        value={field.value}
+        onChange={(value) => field.onChange(value)}
+        placeholder={placeholder}
+      />
+      <Form.ErrorMessage show={!!error} placement="bottomStart">
+        {error}
+      </Form.ErrorMessage>
+    </Form.Group>
+  );
+};
+
+export const Contact = () => {
+  const defaultValues: FormData = {
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   };
 
-  const handleSubmit = async () => {
-    const formData: FormData = { name, replyTo, subject, message };
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ defaultValues });
 
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        console.log("message sent successfully");
-        // Show success message
-        // Reset form
-      } else {
-        console.log("XD");
-        // Show error message
-      }
-    } catch (error) {
-      console.log("LOL");
-      // Handle error
-    }
+  const onSubmit = (data: FormData) => {
+    alert(JSON.stringify(data));
   };
 
   return (
     <div id="contact">
       <h2>Contact</h2>
-      <Form layout="horizontal">
-        <Form.Group controlId="name-6">
-          <Form.ControlLabel>Name</Form.ControlLabel>
-          <Form.Control name="name" value={name} onChange={setName} />
-          <Form.HelpText tooltip>Required</Form.HelpText>
-        </Form.Group>
-        <Form.Group controlId="email-6">
-          <Form.ControlLabel>Email</Form.ControlLabel>
-          <Form.Control
-            name="email"
-            type="email"
-            value={replyTo}
-            onChange={setReplyTo}
-          />
-          <Form.HelpText tooltip>Required</Form.HelpText>
-        </Form.Group>
-        <Form.Group controlId="email-subject">
-          <Form.ControlLabel>Subject</Form.ControlLabel>
-          <Form.Control
-            name="subject"
-            type="text"
-            value={subject}
-            onChange={setSubject}
-          />
-        </Form.Group>
-        <Form.Group controlId="textarea-1">
-          <Form.ControlLabel>Message</Form.ControlLabel>
-          <Form.Control name="textarea" value={message} onChange={setMessage} />
-        </Form.Group>
-        <Form.Group>
-          <ButtonToolbar>
-            <Button appearance="primary" onClick={handleSubmit}>
-              Submit
-            </Button>
-            <Button appearance="default" onClick={resetForm}>
-              Reset
-            </Button>
-          </ButtonToolbar>
-        </Form.Group>
+      <Form
+        onSubmit={(formValue, event) => {
+          event && handleSubmit(onSubmit)(event);
+        }}
+      >
+        <Controller
+          name="name"
+          control={control}
+          rules={validationModel.name}
+          render={({ field, fieldState }) => (
+            <Field
+              as={Input}
+              field={field}
+              error={errors[field.name]?.message}
+              placeholder="Name"
+            />
+          )}
+        />
+        <Controller
+          name="email"
+          control={control}
+          rules={validationModel.email}
+          render={({ field, fieldState }) => (
+            <Field
+              as={Input}
+              field={field}
+              error={errors[field.name]?.message}
+              placeholder="Email"
+            />
+          )}
+        />
+        <Controller
+          name="subject"
+          control={control}
+          rules={validationModel.subject}
+          render={({ field, fieldState }) => (
+            <Field
+              as={Input}
+              field={field}
+              error={errors[field.name]?.message}
+              placeholder="Subject"
+            />
+          )}
+        />
+        <Controller
+          name="message"
+          control={control}
+          rules={validationModel.message}
+          render={({ field, fieldState }) => (
+            <Field
+              as={Input}
+              field={field}
+              error={errors[field.name]?.message}
+              placeholder="Message"
+            />
+          )}
+        />
+        <Button appearance="primary" type="submit">
+          Submit
+        </Button>
       </Form>
     </div>
   );

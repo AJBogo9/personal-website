@@ -11,7 +11,7 @@ const NavigationBar = () => {
       <Nav>
         <Nav.Item href="#about">About</Nav.Item>
         <Nav.Item href="#experience">Experience</Nav.Item>
-        <Nav.Item>Contact</Nav.Item>
+        <Nav.Item href="#contact">Contact</Nav.Item>
       </Nav>
       <Nav pullRight>
         <Nav.Menu title="Language">
