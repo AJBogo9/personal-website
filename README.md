@@ -61,3 +61,10 @@ env: {
     RECIPIENT_EMAIL: process.env.RECIPIENT_EMAIL,
   }
 ```
+
+For getting the Nodemailer password you'll need to 
+
+1) Enable 2-Step Verification on your Google account
+2) Go to your Google Account → Security → App passwords
+3) Select "Other" from the dropdown and give it a name like "NextJS Email API"
+4) Use the generated 16-character password as your EMAIL_PASSWORD
